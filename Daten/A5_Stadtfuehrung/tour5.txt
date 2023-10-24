@@ -1,0 +1,43 @@
+42
+Gabelhaus,1638, ,0
+Burgruine,1654, ,140
+Labyrinth,1667, ,220
+Hängepartie,1672, ,470
+Hexentanzplatz,1681, ,730
+Gabelhaus,1699, ,820
+Hexentanzplatz,1703,X,980
+Eselsbrücke,1711, ,1100
+Dreibannstein,1724, ,1210
+Alte Wache,1733, ,1340
+Palisadenhaus,1740, ,1490
+Dreibannstein,1752, ,1620
+Schmetterling,1760,X,1770
+Dreibannstein,1781, ,1850
+Märchenwald,1793,X,1930
+Fuchsbau,1811, ,2010
+Torfmoor,1817, ,2120
+Gartenschau,1825, ,2260
+Märchenwald,1840, ,2340
+Eselsbrücke,1855, ,2420
+Heimatmuseum,1863, ,2490
+Eselsbrücke,1877, ,2590
+Reiterdenkmal,1880, ,2730
+Riesenrad,1881, ,2910
+Hochsitz,1885, ,2980
+Gartenschau,1898, ,3060
+Riesenrad,1902, ,3180
+Dreibannstein,1911,X,3310
+Olympisches Dorf,1924, ,3470
+Haus der Zukunft,1927,X,3600
+Stellwerk,1931, ,3720
+Dreibannstein,1938, ,3890
+Stellwerk,1942, ,4020
+Labyrinth,1955, ,4230
+Gauklerstadl,1961, ,4310
+Planetarium,1971,X,4390
+Känguruhfarm,1976, ,4440
+Balzplatz,1978, ,4520
+Dreibannstein,1998,X,4610
+Labyrinth,2013, ,4740
+CO2-Speicher,2022, ,4930
+Gabelhaus,2023, ,5000

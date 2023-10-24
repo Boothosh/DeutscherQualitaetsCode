@@ -1,0 +1,30 @@
+29
+Blaues Pferd,1523, ,0  
+Alte Mühle,1544, ,110 
+Marktplatz,1549, ,210
+Zeughaus,1559, ,310
+Marktplatz,1562, ,410
+Springbrunnen,1571, ,490  
+Dom,1596,X,560 
+Bogenschütze,1610, ,680
+Marktplatz,1622, ,820
+Ruhiges Eck,1625, ,850
+Frauentor,1636, ,910
+Ruhiges Eck,1651, ,980
+Springbrunnen,1675, ,1000
+Bogenschütze,1683, ,1070
+Schnecke,1698,X,1220
+Fischweiher,1710, ,1400
+Reiterhof,1728,X,1520
+Schnecke,1742, ,1660
+Schmiede,1765, ,1830 
+Große Gabel,1794, ,1940
+Schnecke,1829, ,2050 
+Europapark,1852, ,2280
+Große Gabel,1874, ,2550 
+Fingerhut,1917,X,2620 
+Stadion,1934, ,2740
+Marktplatz,1962, ,2830
+Baumschule,1974, ,2910
+Polizeipräsidium,1991, ,3050
+Blaues Pferd,2004, ,3200
