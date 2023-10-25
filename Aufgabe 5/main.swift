@@ -1,6 +1,5 @@
+// 42. Bundeswettbewerb Informatik, Team Deutscher Qualitätscode
 import Foundation
-
-// 42. Bundeswettbewerb Informatik, Max Eckstein
 
 struct Tourpunkt: Equatable {
     let jahr: Int

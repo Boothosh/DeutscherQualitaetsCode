@@ -1,6 +1,5 @@
+// 42. Bundeswettbewerb Informatik, Team Deutscher Qualitätscode
 import Foundation
-
-// 42. Bundeswettbewerb Informatik, Max Eckstein
 
 struct Punkt: Hashable {
     let x1: Int

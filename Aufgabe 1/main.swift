@@ -1,3 +1,4 @@
+// 42. Bundeswettbewerb Informatik, Team Deutscher Qualitätscode
 import Foundation
 
 // Seitenlänge des Spielfeldes
