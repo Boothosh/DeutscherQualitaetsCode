@@ -13,12 +13,12 @@ let dateiNummerInt: Int = Int(dateiNummer) ?? 0
 let pfad: URL = URL(fileURLWithPath: "../Daten/A3_Zauberschule/zauberschule\(dateiNummerInt).txt")
 guard let text: String = try? String(contentsOf: pfad) else {
     print("Datei konnte nicht gefunden / ausgelesen werden")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 var zeilen = text.split(whereSeparator: \.isNewline)
 guard let hoeheEinesStockwerksString = zeilen.removeFirst().split(separator: " ").first, let hoeheEinesStockwerks = Int(hoeheEinesStockwerksString) else {
     print("Höhe eines Stockwerks konnte nicht ermittelt werden.")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 
 let stockwerkZeilen: [[Character]] = zeilen.map { zeile in
@@ -46,7 +46,7 @@ for zeile in stockwerkZeilen {
 
 guard let start, let ziel else {
     print("Es konnte kein Start- und/oder Endpunkt gefunden werden.")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 
 // MARK: A* Algorithmus
@@ -124,7 +124,7 @@ func aStarPfad(von start: Punkt, zum ziel: Punkt) -> ([Punkt], Int)? {
 
 guard let weg = aStarPfad(von: start, zum: ziel) else {
     print("Es wurde kein Weg von A nach B gefunden.")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 
 print("\nBerechnung des Weges erfolgreich!")

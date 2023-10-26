@@ -16,7 +16,7 @@ let dateiNummerInt: Int = Int(dateiNummer) ?? 1
 let pfad: URL = URL(fileURLWithPath: "../Daten/A5_Stadtfuehrung/tour\(dateiNummerInt).txt")
 guard let text: String = try? String(contentsOf: pfad) else {
     print("Datei konnte nicht gefunden / ausgelesen werden")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 var zeilen = text.split(whereSeparator: \.isNewline)
 let ersteZeile = zeilen.removeFirst()
@@ -31,7 +31,7 @@ for zeile in zeilen {
 var neueTour:               [Tourpunkt] = urspruenglicheTour
 print(zeilen)
 
-guard let urspruenglicheLaenge = neueTour.last?.abstandVomStart else { exit(-1) }
+guard let urspruenglicheLaenge = neueTour.last?.abstandVomStart else { exit(EXIT_FAILURE) }
 var neueLaenge = urspruenglicheLaenge
 
 // Damit der Index ermittelt werden kann, auch wenn Objekte gelöscht wurden

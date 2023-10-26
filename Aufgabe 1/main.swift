@@ -7,7 +7,7 @@ let n: Int = Int(dateiNummer) ?? 5
 
 guard n >= 4 else {
     print("N ist zu klein")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 
 // Anzahl der Zahlen auf dem Feld

@@ -2,8 +2,8 @@
 import Foundation
 
 protocol Baustein {
-    var hoehenIndex: Int { get set }
-    var breitenIndex: Int { get set }
+    var hoehenIndex: Int { get }
+    var breitenIndex: Int { get }
     func linkesOutput (l linkesInput: Bool, r rechtesInput: Bool) -> Bool
     func rechtesOutput (l linkesInput: Bool, r rechtesInput: Bool) -> Bool
 }
@@ -45,7 +45,7 @@ struct BlauerBaustein: Baustein {
 struct Lichtquelle {
     let hoehenIndex: Int
     let breitenIndex: Int
-    var aktiv: Bool
+    var aktiv: Bool = false
     func aberMit(aktivitaetsStatus aktiv: Bool) -> Lichtquelle {
         return Lichtquelle(hoehenIndex: self.hoehenIndex, breitenIndex: self.breitenIndex, aktiv: aktiv)
     }
@@ -54,10 +54,8 @@ struct Lichtquelle {
 struct PruefLED {
     let hoehenIndex: Int
     let breitenIndex: Int
-    var aktiv: Bool
+    var aktiv: Bool = false
 }
-
-var globalesOutput: [([Lichtquelle], [PruefLED])] = []
 
 // Einlesen der externen Datei und befüllen der Baustein-Liste, Eintragen der Positionen der Prüf-LEDs und der Lichtquellen
 let dateiNummer: String = CommandLine.arguments.last ?? "-"
@@ -65,14 +63,14 @@ let dateiNummerInt: Int = Int(dateiNummer) ?? 1
 let pfad: URL = URL(fileURLWithPath: "../Daten/A4_Nandu/nandu\(dateiNummerInt).txt")
 guard let text: String = try? String(contentsOf: pfad) else {
     print("Datei konnte nicht gefunden / ausgelesen werden")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 var zeilen = text.split(whereSeparator: \.isNewline)
 let ersteZeile = zeilen.removeFirst()
 
 guard let breite = Int(ersteZeile.split(separator: " ")[0]), let hoehe = Int(ersteZeile.split(separator: " ")[1]) else {
     print("Breite und Hoehe konnten nicht ausgelesen werden")
-    exit(-1)
+    exit(EXIT_FAILURE)
 }
 
 // Befüllen der Variablen
@@ -81,16 +79,14 @@ var bausteine: [any Baustein] = []
 var S_pruefLEDs: [PruefLED] = []
 var S_lichtquellen: [Lichtquelle] = []
 
-var hoehenIndex = -1
+var hoehenIndex = 0
 var breitenIndex = 0
 
 var skippeDasNaechste = false
 
 for zeile in zeilen {
-    hoehenIndex += 1
-    breitenIndex = 0
-    for character in zeile {
-        switch character {
+    for zeichen in zeile {
+        switch zeichen {
             case "X":
                 breitenIndex += 1
             case "W":
@@ -130,68 +126,69 @@ for zeile in zeilen {
                     skippeDasNaechste = false
                 }
             case "Q":
-                let neueLichtquelle = Lichtquelle(hoehenIndex: hoehenIndex, breitenIndex: breitenIndex, aktiv: false)
+                let neueLichtquelle = Lichtquelle(hoehenIndex: hoehenIndex, breitenIndex: breitenIndex)
                 S_lichtquellen.append(neueLichtquelle)
                 breitenIndex += 1
             case "L":
-                let neuePruefLED = PruefLED(hoehenIndex: hoehenIndex, breitenIndex: breitenIndex, aktiv: false)
+                let neuePruefLED = PruefLED(hoehenIndex: hoehenIndex, breitenIndex: breitenIndex)
                 S_pruefLEDs.append(neuePruefLED)
                 breitenIndex += 1
             default:
                 continue
         }
     }
+    hoehenIndex += 1
+    breitenIndex = 0
 }
 
-// ENDE
+guard !S_lichtquellen.isEmpty && !S_pruefLEDs.isEmpty else {
+    print("Es gibt keine Lichtquellen und/oder keine Prüf-LED's.")
+    exit(EXIT_FAILURE)
+}
+
+var output: [([Lichtquelle], [PruefLED])] = []
 
 var lichtkarte: [[Bool]] = []
 
-func setzeLichtkarteZurueck() {
-    lichtkarte = []
-    for _ in 0...(hoehe - 1) {
-        var lichtArray = [Bool]()
-        for _ in 0...(breite - 1) {
-            lichtArray.append(false)
-        }        
-        lichtkarte.append(lichtArray)
-    }
-}
-
 func befuelleLichtkarte(lichtquellen: [Lichtquelle]) {
-    setzeLichtkarteZurueck()
+
+    // Lichtkarte zurücksetzen
+    lichtkarte = [[Bool]](repeating: [Bool](repeating: false, count: breite), count: hoehe)
+
+    // Lichkarte erhellen, an den Stellen an denen aktive Lichtquellen sind
     for lichtquelle in lichtquellen {
         lichtkarte[lichtquelle.hoehenIndex][lichtquelle.breitenIndex] = lichtquelle.aktiv
     }
+
+    // Alle Bausteine das Licht weiterleiten lassen
     for baustein in bausteine {
+
         // Sicherstellen, dass der Baustein nicht ganz am oberen Rand ist
         guard baustein.hoehenIndex != 0 else { continue }
         
         let linkesInput = lichtkarte[baustein.hoehenIndex - 1][baustein.breitenIndex]
         let rechtesInput = lichtkarte[baustein.hoehenIndex - 1][baustein.breitenIndex + 1]
         
-        // Linkes Output in die Lichtkarte schreiben
         lichtkarte[baustein.hoehenIndex][baustein.breitenIndex] = baustein.linkesOutput(l: linkesInput, r: rechtesInput)
         lichtkarte[baustein.hoehenIndex][baustein.breitenIndex + 1] = baustein.rechtesOutput(l: linkesInput, r: rechtesInput)
     }
-    // Output-Sensoren
-    var pruefLEDs: [PruefLED] = []
 
-    for i in S_pruefLEDs {
-        pruefLEDs.append(PruefLED(hoehenIndex: i.hoehenIndex, breitenIndex: i.breitenIndex, aktiv: lichtkarte[i.hoehenIndex - 1][i.breitenIndex]))
-    }
-    globalesOutput.append((lichtquellen, pruefLEDs))
+    let pruefLEDs: [PruefLED] = S_pruefLEDs.map({
+        var neueLED = $0
+        neueLED.aktiv = lichtkarte[$0.hoehenIndex - 1][$0.breitenIndex]
+        return neueLED
+    })
+
+    output.append((lichtquellen, pruefLEDs))
 }
 
-guard S_lichtquellen.count != 0 else { exit(-1) }
-
-func rekursiveDingsFunktion(_ lichtquellen: [Lichtquelle], eigenerIndex: Int){
+func testeFall(_ lichtquellen: [Lichtquelle], eigenerIndex: Int){
     let esGibtNochEinenWeiteren = eigenerIndex + 1 < S_lichtquellen.count
     if esGibtNochEinenWeiteren {
-        rekursiveDingsFunktion(lichtquellen, eigenerIndex: eigenerIndex + 1)
+        testeFall(lichtquellen, eigenerIndex: eigenerIndex + 1)
         var neueLichtquellenKonfig = lichtquellen
         neueLichtquellenKonfig[eigenerIndex] = lichtquellen[eigenerIndex].aberMit(aktivitaetsStatus: true)
-        rekursiveDingsFunktion(neueLichtquellenKonfig, eigenerIndex: eigenerIndex + 1)
+        testeFall(neueLichtquellenKonfig, eigenerIndex: eigenerIndex + 1)
     } else {
         befuelleLichtkarte(lichtquellen: lichtquellen)
         var neueLichtquellenKonfig = lichtquellen
@@ -200,9 +197,9 @@ func rekursiveDingsFunktion(_ lichtquellen: [Lichtquelle], eigenerIndex: Int){
     }
 }
 
-rekursiveDingsFunktion(S_lichtquellen, eigenerIndex: 0)
+testeFall(S_lichtquellen, eigenerIndex: 0)
 
-for i in globalesOutput {
+for i in output {
     print("Für Konfiguration:")
     for i in i.0.enumerated() {
         print("Q\(i.offset + 1) ist \(i.element.aktiv ? "aktiv" : "inaktiv")")
