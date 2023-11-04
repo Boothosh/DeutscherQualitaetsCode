@@ -82,7 +82,6 @@ func loescheTourpunkteAusTour(von startIndex: Int, bis endIndex: Int, bei tour: 
             }
         }
     } else {
-        print("x")
         // Zu löschende Tourpunkte gehen über das Ende der Tour hinaus
         // Lösche zunächst die Tourpunkte vom _startIndex_ bis zum Ende der Liste
         for i in startIndex...(tour.0.count - 1) {
@@ -154,37 +153,23 @@ if let indexVomErstenEssenziellenPunkt = urspruenglicheTour.firstIndex(where: {$
             // Breche den Loop ab, wenn er die ganze Liste einmal durchgesucht hat.
             while StartIndexInNeuerTour != untersuchterIndexInNeuerTour {
                 let untersuchtesObjektNeueTour = neueTour.0[untersuchterIndexInNeuerTour]
-                let willStartEndPaarEntfernen = (StartIndexInNeuerTour == neueTour.0.count - 1) && (untersuchterIndexInNeuerTour == 0)
-                if untersuchtesObjektNeueTour.ort == untersuchtesObjekt.ort && !willStartEndPaarEntfernen {
-                    let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == untersuchterIndexInNeuerTour
-                    if untersuchtesObjekt.essenziell && untersuchtesObjektNeueTour.essenziell && !keinOrtDazwischen {
-                        let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
-                        neueTouren.append(neueneueTour)
-                        // Lösche alle Strecken dazwischen
+                if untersuchtesObjektNeueTour.ort == untersuchtesObjekt.ort {
+                    // Die zwei betrachteten Tourpunkte sind am gleichen Ort
+                    if (untersuchtesObjekt.essenziell && untersuchtesObjektNeueTour.essenziell) || untersuchterIndexInNeuerTour < StartIndexInNeuerTour {
+                        let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == untersuchterIndexInNeuerTour
+                        // Beide begrenzenden Tourpunkte dürfen nicht mitgelöscht werden.
+                        if !keinOrtDazwischen {
+                            let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
+                            neueTouren.append(neueneueTour)
+                        }
                     } else if !untersuchtesObjekt.essenziell && untersuchtesObjektNeueTour.essenziell {
-                        if untersuchterIndexInNeuerTour < StartIndexInNeuerTour {
-                            let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == (untersuchterIndexInNeuerTour - 1) % neueTour.0.count
-                            if !keinOrtDazwischen {
-                                let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
-                                neueTouren.append(neueneueTour)
-                            }
-                        } else {
-                            let neueneueTour = loescheTourpunkteAusTour(von: StartIndexInNeuerTour, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour, loescheErsteStrecke: false)
-                            neueTouren.append(neueneueTour)
-                        }
-                        // Forderen Tourpunkt und die dazwischen Löschen
+                        // Der „hintere“ Tourpunkt darf mit-gelöscht werden.
+                        let neueneueTour = loescheTourpunkteAusTour(von: StartIndexInNeuerTour, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour, loescheErsteStrecke: false)
+                        neueTouren.append(neueneueTour)
                     } else {
-                        if untersuchterIndexInNeuerTour < StartIndexInNeuerTour  {
-                            let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == (untersuchterIndexInNeuerTour - 1) % neueTour.0.count
-                            if !keinOrtDazwischen {
-                                let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
-                                neueTouren.append(neueneueTour)
-                            }
-                        } else {
-                            let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: untersuchterIndexInNeuerTour, bei: neueTour, loescheLetzteStrecke: false)
-                            neueTouren.append(neueneueTour)
-                        }
-                        // Tourpunkte dazwischen und den hinteren Untersuchten löschen
+                        // Der „vordere“ Tourpunkt darf mit-gelöscht werden.
+                        let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: untersuchterIndexInNeuerTour, bei: neueTour, loescheLetzteStrecke: false)
+                        neueTouren.append(neueneueTour)
                     }
                 }
                 if untersuchtesObjektNeueTour.essenziell {
