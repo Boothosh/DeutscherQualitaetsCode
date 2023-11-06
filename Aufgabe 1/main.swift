@@ -16,17 +16,8 @@ let k: Int = Int(ceil(Double(n)/2.0))
 // Generiertes Spiel
 var generiertesSpiel: String = "\(n)\n\(k)"
 
-// Spielfeld
-var spielfeld = [[Int]]()
-
-// Alles auf 0 setzen, also das leere Spielfeld füllen
-for _ in 0 ..< n {
-    var zeile = [Int]()
-    for _ in 0 ..< n {
-        zeile.append(0)
-    }
-    spielfeld.append(zeile)
-}
+// Spielfeld, bei dem anfangs alle Werte auf 0 sind (es ist noch leer)
+var spielfeld = [[Int]](repeating: [Int](repeating: 0, count: n), count: n)
 
 // Es für den Algorithmus unlösbar machen
 spielfeld[0][1] = 1
