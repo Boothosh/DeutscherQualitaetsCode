@@ -46,8 +46,8 @@ struct Lichtquelle {
     let hoehenIndex: Int
     let breitenIndex: Int
     var aktiv: Bool = false
-    func aberMit(aktivitaetsStatus aktiv: Bool) -> Lichtquelle {
-        return Lichtquelle(hoehenIndex: self.hoehenIndex, breitenIndex: self.breitenIndex, aktiv: aktiv)
+    func angeschaltet() -> Lichtquelle {
+        return Lichtquelle(hoehenIndex: self.hoehenIndex, breitenIndex: self.breitenIndex, aktiv: true)
     }
 }
 
@@ -187,12 +187,12 @@ func testeFall(_ lichtquellen: [Lichtquelle], eigenerIndex: Int){
     if esGibtNochEinenWeiteren {
         testeFall(lichtquellen, eigenerIndex: eigenerIndex + 1)
         var neueLichtquellenKonfig = lichtquellen
-        neueLichtquellenKonfig[eigenerIndex] = lichtquellen[eigenerIndex].aberMit(aktivitaetsStatus: true)
+        neueLichtquellenKonfig[eigenerIndex] = lichtquellen[eigenerIndex].angeschaltet()
         testeFall(neueLichtquellenKonfig, eigenerIndex: eigenerIndex + 1)
     } else {
         befuelleLichtkarte(lichtquellen: lichtquellen)
         var neueLichtquellenKonfig = lichtquellen
-        neueLichtquellenKonfig[eigenerIndex] = lichtquellen[eigenerIndex].aberMit(aktivitaetsStatus: true)
+        neueLichtquellenKonfig[eigenerIndex] = lichtquellen[eigenerIndex].angeschaltet()
         befuelleLichtkarte(lichtquellen: neueLichtquellenKonfig)
     }
 }

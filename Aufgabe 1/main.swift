@@ -27,14 +27,27 @@ spielfeld[n-2][0] = 2
 
 if k != 2 {
     // Die restlichen Zahlen in graden Linien von oben nach unten einarbeiten, damit die Mindestanzahl der Zahlen gegeben ist
-    for i in 3...k {
-        spielfeld[0][i+1] = i
-        spielfeld[n-1][i+1] = i
+    var restlicheZahlen = Array(3...k)
+    restlicheZahlen.shuffle()
+    for i in restlicheZahlen.enumerated() {
+        spielfeld[0][i.offset+4] = i.element
+        spielfeld[n-1][i.offset+4] = i.element
+    }
+}
+
+// Generiertes Spiel drehen
+var gedrehtesSpiel = spielfeld
+for _ in 0...Int.random(in: 1..<4) {
+    spielfeld = gedrehtesSpiel
+    for i in 0...(n-1) {
+        for j in 0...(n-1) {
+            gedrehtesSpiel[i][j] = spielfeld[n - j - 1][i];
+        }
     }
 }
 
 // Output ergänzen
-for i in spielfeld {
+for i in gedrehtesSpiel {
     var zeile = "\n"
     for ii in i.enumerated() {
         zeile.append((ii.offset != 0 ? " " : "") + String(ii.element))

@@ -59,24 +59,24 @@ func reduziereAufKuerzesteTour(){
     neueTouren = [kuerzesteTour]
 }
 
-func loescheTourpunkteAusTour(von startIndex: Int, bis endIndex: Int, bei tour: ([Tourpunkt], Int), loescheErsteStrecke: Bool = true, loescheLetzteStrecke: Bool = true) -> ([Tourpunkt], Int) {
+func loescheTourpunkteAusTour(von startIndex: Int, bis endIndex: Int, bei tour: ([Tourpunkt], Int)) -> ([Tourpunkt], Int) {
     var veraenderbareTour = tour // Veränderbare Kopie der Tour
     var schonGeloeschte = 0
     var entfernteStrecke = 0
-    if endIndex > startIndex {
+    if endIndex >= startIndex {
         for i in startIndex...endIndex {
             // Tourpunkt löschen
             veraenderbareTour.0.remove(at: i - schonGeloeschte)
             schonGeloeschte += 1
             // Länge anpassen
-            if i != 0 && (i != startIndex || loescheErsteStrecke) {
+            if i != 0 {
                 // Zu dem betrachteten Punkt hinführende Strecke löschen
+                // Zum Anfangspunkt der Tour fürt kein Weg hin, deshalb kann auch keiner gelöscht werden
                 let streckeZuDiesemPunkt = tour.0[i].abstandVomStart - tour.0[i - 1].abstandVomStart
                 entfernteStrecke += streckeZuDiesemPunkt
             }
-            if i == endIndex && loescheLetzteStrecke && i != tour.0.count - 1 {
+            if i == endIndex && i != tour.0.count - 1 {
                 // Von dem betrachteten Punkt wegführende Strecke löschen
-                // Wird nur ausgeführt, wenn es der letzte zu Löschende Index ist, und _loescheLetzteStrecke_ wahr ist.
                 let streckeAbDiesemPunkt = tour.0[i + 1].abstandVomStart - tour.0[i].abstandVomStart
                 entfernteStrecke += streckeAbDiesemPunkt
             }
@@ -88,11 +88,14 @@ func loescheTourpunkteAusTour(von startIndex: Int, bis endIndex: Int, bei tour: 
             veraenderbareTour.0.remove(at: i - schonGeloeschte)
             schonGeloeschte += 1
             // Verändern der Länge
-            if i != 0 && (loescheErsteStrecke || i != startIndex) {
+            if i != 0 {
+                // Zu dem betrachteten Punkt hinführende Strecke löschen
+                // Zum Anfangspunkt der Tour fürt kein Weg hin, deshalb kann auch keiner gelöscht werden
                 let streckeZuDiesemPunkt = tour.0[i].abstandVomStart - tour.0[i - 1].abstandVomStart
                 entfernteStrecke += streckeZuDiesemPunkt
             }
-            if i == endIndex && loescheLetzteStrecke && i != tour.0.count - 1 {
+            if i == endIndex && i != tour.0.count - 1 {
+                // Von dem betrachteten Punkt wegführende Strecke löschen
                 let streckeAbDiesemPunkt = tour.0[i + 1].abstandVomStart - tour.0[i].abstandVomStart
                 entfernteStrecke += streckeAbDiesemPunkt
             }
@@ -110,11 +113,14 @@ func loescheTourpunkteAusTour(von startIndex: Int, bis endIndex: Int, bei tour: 
             veraenderbareTour.0.remove(at: i - schonGeloeschte)
             schonGeloeschte += 1
             // Verändern der Länge
-            if i != 0 && (loescheErsteStrecke || i != startIndex) {
+            if i != 0 {
+                // Zu dem betrachteten Punkt hinführende Strecke löschen
+                // Zum Anfangspunkt der Tour fürt kein Weg hin, deshalb kann auch keiner gelöscht werden
                 let streckeZuDiesemPunkt = tour.0[i].abstandVomStart - tour.0[i - 1].abstandVomStart
                 entfernteStrecke += streckeZuDiesemPunkt
             }
-            if i == endIndex && loescheLetzteStrecke && i != tour.0.count - 1 {
+            if i == endIndex && i != tour.0.count - 1 {
+                // Von dem betrachteten Punkt wegführende Strecke löschen
                 let streckeAbDiesemPunkt = tour.0[i + 1].abstandVomStart - tour.0[i].abstandVomStart
                 entfernteStrecke += streckeAbDiesemPunkt
             }
@@ -155,20 +161,11 @@ if let indexVomErstenEssenziellenPunkt = urspruenglicheTour.firstIndex(where: {$
                 let untersuchtesObjektNeueTour = neueTour.0[untersuchterIndexInNeuerTour]
                 if untersuchtesObjektNeueTour.ort == untersuchtesObjekt.ort {
                     // Die zwei betrachteten Tourpunkte sind am gleichen Ort
-                    if (untersuchtesObjekt.essenziell && untersuchtesObjektNeueTour.essenziell) || untersuchterIndexInNeuerTour < StartIndexInNeuerTour {
-                        let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == untersuchterIndexInNeuerTour
-                        // Beide begrenzenden Tourpunkte dürfen nicht mitgelöscht werden.
-                        if !keinOrtDazwischen {
-                            let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
-                            neueTouren.append(neueneueTour)
-                        }
-                    } else if !untersuchtesObjekt.essenziell && untersuchtesObjektNeueTour.essenziell {
-                        // Der „hintere“ Tourpunkt darf mit-gelöscht werden.
-                        let neueneueTour = loescheTourpunkteAusTour(von: StartIndexInNeuerTour, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour, loescheErsteStrecke: false)
-                        neueTouren.append(neueneueTour)
-                    } else {
-                        // Der „vordere“ Tourpunkt darf mit-gelöscht werden.
-                        let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: untersuchterIndexInNeuerTour, bei: neueTour, loescheLetzteStrecke: false)
+                    let keinOrtDazwischen = (StartIndexInNeuerTour + 1) % neueTour.0.count == untersuchterIndexInNeuerTour
+                    if !keinOrtDazwischen {
+                        print((StartIndexInNeuerTour + 1))
+                        print(untersuchterIndexInNeuerTour - 1)
+                        let neueneueTour = loescheTourpunkteAusTour(von: (StartIndexInNeuerTour + 1) % neueTour.0.count, bis: (untersuchterIndexInNeuerTour - 1) % neueTour.0.count, bei: neueTour)
                         neueTouren.append(neueneueTour)
                     }
                 }
